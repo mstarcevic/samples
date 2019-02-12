@@ -1,0 +1,101 @@
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<div class="modal-header">
+    <h5 style="text-align:left">{{ headings.strandName }}</h5>
+    <h5 style="text-align:left">Foundation {{ slpData.ausvelsRef }}</h5>
+    <br>
+</div>
+
+<div class="modal-entries">
+    <p>{{ slpData.description }}</p>
+
+    <div class="modal-form ng-hide" ng-show="showSLPForm">
+        <form name="slpForm" novalidate ng-submit="slpFormSubmit()">
+            <fieldset>
+
+                <div class="row">
+                    <div class="large-12 columns">
+                        <label>
+                            <span ng-if="!isComment">{{ slpStaticHeadings.outcome }}</span>
+                            <span ng-if="isComment">{{ slpStaticHeadings.comment }}</span>
+                        </label>
+                        <textarea ng-model="outcome" name="outcome" id="outcome" required></textarea>
+                    </div>
+                </div>
+                <br>
+
+                <div class="row">
+                    <div class="large-12 columns">
+                        <button type="button" ng-class="{true: 'C-btn', false: 'O-btn'}[isComment]" ng-click="addNoMore()">Cancel</button>
+                        <button type="submit" ng-class="{true: 'C-btn', false: 'O-btn'}[isComment]" ng-show="checkFields()">Save</button>
+                    </div>
+                </div>
+
+            </fieldset>
+        </form>
+    </div>
+
+    <span ng-include src="'views/partials/upload.html'"></span>
+
+    <div class="row" style="margin-bottom:10px" ng-if="!isFuture(slpOutcomes[0])" ng-cloak>
+        <button type="button" class="O-btn" ng-show="showAddBtn" ng-click="addClick()">Add Goal</button>
+        <button type="button" class="C-btn" ng-show="showAddBtn" ng-click="addClick('C', {})">Add Progress</button>
+    </div>
+
+    <div style="height:500px;overflow:auto">
+        <table>
+            <colgroup>
+                <col span="1" style="width:08%">
+                <col span="1" style="width:01%">
+                <col span="1" style="width:76%">
+                <col span="1" style="width:10%">
+                <col span="1" style="width:05%">
+            </colgroup>
+            <tr ng-repeat="slpOutcome in slpOutcomes">
+
+                <td>{{ slpOutcome.createdDate }}</td>
+                <td class="{{ slpOutcome.type }}-outcome">
+                    <span ng-if="slpOutcome.type=='O'" class="outcomeType">G</span>
+                    <span ng-if="slpOutcome.type=='C'" class="outcomeType">P</span>
+                    <span ng-if="slpOutcome.type=='D'" class="outcomeType">U</span>
+                </td>
+                <td>
+                    {{ slpOutcome.outcome }}
+                    <span ng-if="slpOutcome.outcome=='Future Goal'">
+                        <span class="round label">Click E (Edit) to complete this Goal</span>
+                    </span>
+                </td>
+                <td style="text-align:right">
+                    <span ng-if="slpOutcome.type=='D'">
+                        <a my-href target="_blank"><button type="button" class="Z-letterbtn">V</button></a>
+                    </span>
+                    <span ng-if="slpOutcome.teacherInitials == initials">
+
+                        <span ng-if="slpOutcome.type=='O' && slpOutcome.id==1">
+                            <button class="C-letterbtn" ng-click="addClick('C', slpOutcome)">P</button>
+                            <button type="button" class="Z-letterbtn" ng-click="editClick(slpOutcome)">E</button>
+                            <span ng-if="slpOutcome.noOfComments==0">
+                                <button type="button" class="Z-letterbtn" ng-click="deleteClick(slpOutcome)">D</button>
+                            </span>
+                        </span>
+
+                        <span ng-if="slpOutcome.type=='C' && slpOutcome.relatesTo==1">
+                            <button class="D-letterbtn" ng-click="uploadClick(slpOutcome)">U</button>
+                        </span>
+
+                        <span ng-if="slpOutcome.type=='D' && slpOutcome.relatesTo==1">
+                            <button type="button" class="Z-letterbtn" ng-click="deleteClick(slpOutcome)">D</button>
+                        </span>
+
+                        <span ng-if="slpOutcome.type=='C' && slpOutcome.relatesTo==1 && slpOutcome.isLast==1">
+                            <button type="button" class="Z-letterbtn" ng-click="editClick(slpOutcome)">E</button>
+                            <span ng-if="slpOutcome.noOfDocuments==0">
+                                <button type="button" class="Z-letterbtn" ng-click="deleteClick(slpOutcome)">D</button>
+                            </span>
+                        </span>
+                    </span>
+                </td>
+                <td>{{ slpOutcome.teacherInitials }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
